@@ -431,6 +431,10 @@ func (tools gccgoToolchain) link(b *Builder, root *Action, out, importcfg string
 		ldflags = str.StringList("-Wl,-(", ldflags, "-Wl,-)")
 	}
 
+	if b.gccSupportsFlag([]string{tools.linker()}, "-arch") {
+		ldflags = append(ldflags, "-arch", cfg.GccArch(tools.linker()))
+	}
+
 	if root.buildID != "" {
 		// On systems that normally use gold or the GNU linker,
 		// use the --build-id option to write a GNU build ID note.
@@ -573,6 +577,9 @@ func (tools gccgoToolchain) cc(b *Builder, a *Action, ofile, cfile string) error
 	}
 	if b.gccSupportsFlag(compiler, "-gno-record-gcc-switches") {
 		defs = append(defs, "-gno-record-gcc-switches")
+	}
+	if b.gccSupportsFlag(compiler, "-arch") {
+		defs = append(defs, "-arch", cfg.GccArch(compiler[0]))
 	}
 	return b.run(a, p.Dir, p.ImportPath, nil, compiler, "-Wall", "-g",
 		"-I", a.Objdir, "-I", inc, "-o", ofile, defs, "-c", cfile)

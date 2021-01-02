@@ -2454,6 +2454,9 @@ func (b *Builder) compilerCmd(compiler []string, incdir, workdir string) []strin
 		a = append(a, "-fPIC")
 	}
 	a = append(a, b.gccArchArgs()...)
+	if b.gccSupportsFlag(compiler, "-arch") {
+		a = append(a, "-arch", cfg.GccArch(compiler[0]))
+	}
 	// gcc-4.5 and beyond require explicit "-pthread" flag
 	// for multithreading with pthread library.
 	if cfg.BuildContext.CgoEnabled {

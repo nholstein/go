@@ -391,3 +391,18 @@ func gopathDir(rel string) string {
 	}
 	return filepath.Join(list[0], rel)
 }
+
+// GccArch returns the GOARCH name equivalent used by GCC/Clang.
+func GccArch(compiler string) string {
+	switch Goarch {
+	case "amd64":
+		return "x86_64"
+	case "386":
+		return "x86"
+	case "arm64":
+		if !strings.HasPrefix(compiler, "clang") {
+			return "aarch64"
+		}
+	}
+	return Goarch
+}
